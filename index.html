@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Xiryoi</title>
+    <title>Payment Xiryou</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -332,6 +332,64 @@
             transform: translateX(0);
         }
 
+        /* Audio Player Styles */
+        .audio-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(30, 58, 138, 0.8);
+            padding: 8px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-container:hover {
+            opacity: 1;
+        }
+
+        .audio-info {
+            font-size: 0.8rem;
+            color: var(--light);
+            white-space: nowrap;
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-btn:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .audio-btn.muted {
+            color: #ff6b6b;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -349,10 +407,37 @@
             .contact-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .audio-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="https://k.top4top.io/m_3608u7gn30.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Audio Controls -->
+    <div class="audio-container">
+        <div class="audio-info">
+            <i class="fas fa-music"></i>  Music
+        </div>
+        <div class="audio-controls">
+            <button class="audio-btn" id="volumeUp">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="audio-btn" id="volumeDown">
+                <i class="fas fa-volume-down"></i>
+            </button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>Payment Xiryou</h1>
@@ -518,8 +603,8 @@
                 <div class="card-header">
                     <div class="card-icon">
                         <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h2 class="card-title">GOPAY</h2>
+                </div>
+                  <h2 class="card-title">GOPAY</h2>
                 </div>
                 <div class="card-content">
                     <div class="payment-number">
@@ -542,7 +627,7 @@
                 </div>
                 <div class="card-content">
                     <div class="qris-container">
-                        <img src="https://img1.pixhost.to/images/10227/661769376_awang.jpg" alt="QRIS Payment" class="qris-image">
+                        <img src="https://img1.pixhost.to/images/10197/661422109_awang.jpg" alt="QRIS Payment" class="qris-image">
                     </div>
                     <button class="btn download-btn" style="width: 100%;">
                         <i class="fas fa-download"></i> Download QRIS
@@ -570,7 +655,7 @@
                         <i class="fab fa-whatsapp"></i>
                     </div>
                     <h3 class="contact-title">WhatsApp 2</h3>
-            <a href="https://wa.me/6287759340782" target="_blank" class="btn" style="width: 100%; margin-top: 10px;">
+                    <a href="https://wa.me/6287759340782" target="_blank" class="btn" style="width: 100%; margin-top: 10px;">
                         <i class="fab fa-whatsapp"></i> Chat Sekarang
                     </a>
                 </div>
@@ -598,7 +683,7 @@
         </div>
 
         <footer>
-            <p></p>
+            <p></p></p>
         </footer>
     </div>
 
@@ -608,6 +693,50 @@
     </div>
 
     <script>
+        // Audio functionality
+        const bgMusic = document.getElementById('bgMusic');
+        const volumeUp = document.getElementById('volumeUp');
+        const volumeDown = document.getElementById('volumeDown');
+        
+        // Set volume to maximum and play music
+        function initializeAudio() {
+            bgMusic.volume = 1.0;
+            bgMusic.play().catch(error => {
+                console.log('Autoplay prevented:', error);
+                // If autoplay is prevented, show a message and try again on user interaction
+                document.body.addEventListener('click', function() {
+                    bgMusic.play();
+                }, { once: true });
+            });
+        }
+        
+        // Initialize audio when page loads
+        window.addEventListener('load', initializeAudio);
+        
+        // Volume controls
+        volumeUp.addEventListener('click', function() {
+            if (bgMusic.volume < 1.0) {
+                bgMusic.volume = Math.min(1.0, bgMusic.volume + 0.1);
+            }
+        });
+        
+        volumeDown.addEventListener('click', function() {
+            if (bgMusic.volume > 0.1) {
+                bgMusic.volume = Math.max(0.1, bgMusic.volume - 0.1);
+            }
+        });
+        
+        // Prevent muting through any means
+        bgMusic.addEventListener('volumechange', function() {
+            if (bgMusic.muted) {
+                bgMusic.muted = false;
+            }
+            // Ensure volume never goes below 10%
+            if (bgMusic.volume < 0.1) {
+                bgMusic.volume = 0.1;
+            }
+        });
+
         // Salin nomor ke clipboard
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', function() {
